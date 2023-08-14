@@ -1,0 +1,10 @@
+CompileFlags:
+  Add:
+    - -Wall
+    - -Wshadow
+    - -lpthread
+    - -g
+    - -DDEBUG
+    - -O0
+
+  Compiler: gcc
