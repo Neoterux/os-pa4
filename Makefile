@@ -10,7 +10,7 @@ VERSION = 0.0.1
 ASAN_FLAGS = -fsanitize=address -fno-omit-frame-pointer -Wno-format-security
 CFLAGS := -Werror -Wall --std=c18 -DEXEC_VERSION=$(VERSION)
 LDFLAGS += -lpthread
-DEBUG_FLAGS = $(ASAN_FLAGS) -O0 -g3
+DEBUG_FLAGS = -O0 -g3
 
 #
 # Project Files
@@ -39,6 +39,8 @@ $(BUILDDIR)/%.o: %.c
 	@mkdir -p "$(shell dirname "$@")"
 	$(CC) $(CFLAGS) $(LDFLAGS) -I$(HEADERDIR) -I$(dir $<) -c $< -o $@
 
+memleak: CFLAGS += $(ASAN_FLAGS)
+memleak: $(BIN)
 
 debug: CFLAGS += $(DEBUG_FLAGS) -DDEBUG
 debug: $(BIN)
