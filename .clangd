@@ -6,5 +6,6 @@ CompileFlags:
     - -g
     - -DDEBUG
     - -O0
+    - -D__GNUC__
 
   Compiler: gcc
