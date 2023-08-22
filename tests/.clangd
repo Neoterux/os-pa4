@@ -1,0 +1,6 @@
+CompileFlags:
+  Add:
+    - -Wall
+    - -lcunit
+
+  Compiler: gcc

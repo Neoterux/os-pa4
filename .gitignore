@@ -62,3 +62,5 @@ Mkfile.old
 dkms.conf
 
 /iproc
+compile_commands.json
+.cache/

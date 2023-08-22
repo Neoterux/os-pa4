@@ -9,7 +9,7 @@
  *
  */
 #ifndef PA_4_H
-#define PA_4_H
+#define PA_4_H 1
 #define PA4_VERSION "v0.01"
 
 typedef unsigned char bool;
