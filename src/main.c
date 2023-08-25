@@ -3,7 +3,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <getopt.h>
+#include "core/bits/errors.h"
 #include "core/pa4.h"
+#include "core/processor.h"
+#include "utils/log.h"
+#include "core/common_types.h"
 
 struct progopt settings = {
     .threads = 4,
@@ -100,6 +104,29 @@ int main(int argc, char **argv) {
         usage(argv[0]);
         exit(EXIT_FAILURE);
     }
+    log_info("Starting the magic\n");
+    log_debug("Trying to configure shared memory\n");
 
+    if (!configure_shared_memory()) {
+      log_err("Error while configuring shared memory\n");
+      perror("err");
+      exit(ERROR_SHMM);
+    }
+    log_info("Configured Shared Memory\n");
+    log_debug("Trying ot configure pipe");
+    if (!configure_pipe()) {
+      log_err("Couldn't configure pipe ");
+      perror("broken pipe");
+      exit(ERROR_PIPE);
+    }
+    log_info("Configured pipe\n");
+
+    start_magic();
+
+    /**
+     * Now we are going to handle the pipe messages, to
+     * atomically write on image.
+     */
+    log_info("filter process has finnished\n");
     return 0;
 }
