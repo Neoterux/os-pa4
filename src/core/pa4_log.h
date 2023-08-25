@@ -1,8 +1,0 @@
-////////////////////////////////////
-//      Internal login file     ////
-//  This is only for debugging  ////
-////////////////////////////////////
-#ifndef PA4_LOG
-#define PA4_LOG
-
-#endif
