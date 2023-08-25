@@ -2,7 +2,7 @@
 # Compiler setup
 #
 CC ?= gcc
-VERSION = 0.0.1
+VERSION ="0.0.5a"
 
 #
 # Compiler Flags
@@ -33,7 +33,7 @@ all: $(BIN)
 
 
 $(BIN): $(OBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o $(BIN)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o $(BUILDDIR)/$(BIN)
 
 $(BUILDDIR)/%.o: %.c
 	@mkdir -p "$(shell dirname "$@")"

@@ -10,7 +10,9 @@
  */
 #ifndef PA_4_H
 #define PA_4_H 1
-#define PA4_VERSION "v0.01"
+#define _STR2(s) #s
+#define _STR(s) _STR2(s)
+#define PA4_VERSION "v" _STR(EXEC_VERSION)
 
 void usage(char *exec);
 
