@@ -12,15 +12,6 @@
 #define PA_4_H 1
 #define PA4_VERSION "v0.01"
 
-typedef unsigned char bool;
-
-struct progopt {
-    int threads;
-    bool inverse;
-    bool horizontal;
-    bool preview;
-};
-
 void usage(char *exec);
 
 void version(char *exec);
