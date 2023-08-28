@@ -17,9 +17,15 @@ DEBUG_FLAGS = -O0 -g3
 #
 BUILDDIR = build
 SOURCEDIR = src
+TESTDIR = tests
 SOURCES := $(shell find $(SOURCEDIR) -name '*.c')
 OBJECTS := $(addprefix $(BUILDDIR)/,$(SOURCES:%.c=%.o))
 BIN = iproc
+
+NMSOURCES = $(shell find $(SOURCEDIR) \( -iname '*.c' ! -iname 'main.c' \))
+NMOBJECTS := $(addprefix $(BUILDDIR)/,$(NMSOURCES:%.c=%.o))
+TEST_SOURCES := $(shell find $(TESTDIR) -name '*.c')
+TEST_OBJECTS := $(addprefix $(BUILDDIR)/,$(TEST_SOURCES:%.c=%.o))
 
 #
 # Helper Vars
@@ -50,5 +56,12 @@ setup:
 
 clean:
 	$(RM) $(BIN) $(OBJECTS)
+
+build_test: CFLAGS += -fPIC
+build_test: $(NMOBJECTS) $(TEST_OBJECTS)
+	$(CC) -lcunit -I$(SOURCEDIR) $(NMOBJECTS) $(TEST_OBJECTS) -o $(BUILDDIR)/test-bin
+
+test: build_test
+
 
 distclean: clean
