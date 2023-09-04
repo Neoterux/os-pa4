@@ -18,7 +18,7 @@
  *  kernel used on filters
  *
  */
-typedef int8_t kernel_t[3][3];
+typedef uint_fast8_t kernel_t[3][3];
 
 
 /**
@@ -46,19 +46,19 @@ extern const double BOX_BLUR_KERNEL_MULTIPLIER;
  * @brief Kernel for the gaussian filter.
  *
  */
-extern const kernel_t GAUSSIAN_BLUR_3X3_KERNEL;
+extern const uint8_t GAUSSIAN_BLUR_3X3_KERNEL[3][3];
 
 /**
  * @brief Kernel for the box blur
  *
  */
-extern const kernel_t BOX_BLUR_KERNEL;
+extern const uint8_t BOX_BLUR_KERNEL[3][3];
 
 /**
  * @brief Kernel for edge detection;
  *
  */
-extern const kernel_t RIDGE_KERNEL;
+extern const uint8_t RIDGE_KERNEL[3][3];
 
 
 #endif /* _KERNEL_H_ */

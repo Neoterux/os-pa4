@@ -4,10 +4,10 @@
 #define _CONVOLUTION_H_ 1
 
 typedef struct {
-  kernel_t *kernel;
+  const kernel_t kernel;
   double kernel_multiplier;
 } kernel_config_t;
 
-uint8_t apply_filter(const kernel_config_t kernel_settings, const uint8_t (* __src_matrix)[3]);
+uint8_t apply_filter(const kernel_t kernel, const double multiplier, const uint8_t (* __src_matrix)[3]);
 
 #endif
