@@ -64,3 +64,6 @@ dkms.conf
 /iproc
 compile_commands.json
 .cache/
+test_images/
+*.bmp
+*.dip

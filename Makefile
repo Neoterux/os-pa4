@@ -7,9 +7,10 @@ VERSION ="0.0.5a"
 #
 # Compiler Flags
 #
-ASAN_FLAGS = -fsanitize=address -fno-omit-frame-pointer -Wno-format-security
-CFLAGS := -Werror -Wall --std=c18 -DEXEC_VERSION=$(VERSION)
-LDFLAGS += -lpthread
+ASAN_FLAGS = -g -fsanitize=address -fno-omit-frame-pointer -Wno-format-security
+CFLAGS += -Werror -Wall --std=c18 -DEXEC_VERSION=$(VERSION)
+LIBS := -lpthread
+LDFLAGS := -Wl,-z,relro,-z,now
 DEBUG_FLAGS = -O0 -g3
 
 #
@@ -39,14 +40,15 @@ all: $(BIN)
 
 
 $(BIN): $(OBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o $(BUILDDIR)/$(BIN)
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $(BUILDDIR)/$(BIN)
 
 $(BUILDDIR)/%.o: %.c
 	@mkdir -p "$(shell dirname "$@")"
-	$(CC) $(CFLAGS) $(LDFLAGS) -I$(HEADERDIR) -I$(dir $<) -c $< -o $@
+	$(CC) $(CFLAGS) $(LIBS) -I$(HEADERDIR) -I$(dir $<) -c $< -o $@
 
 memleak: CFLAGS += $(ASAN_FLAGS)
-memleak: $(BIN)
+memleak: LDFLAGS += $(ASAN_FLAGS)
+memleak: clean $(BIN)
 
 debug: CFLAGS += $(DEBUG_FLAGS) -DDEBUG
 debug: $(BIN)

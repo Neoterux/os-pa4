@@ -7,5 +7,8 @@ CompileFlags:
     - -DDEBUG
     - -O0
     - -D__GNUC__
+    - -Wno-unknown-pragmas
+    - -I/usr/lib/gcc/x86_64-pc-linux-gnu/13.2.1/include
+    - --std=c18
 
   Compiler: gcc
