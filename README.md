@@ -60,3 +60,10 @@ The goals are:
 - [ ] Learn how to structure a C project.
 - [ ] Try to only use C for everything on the right way.
 - [ ] TODO
+
+
+## Copyright
+
+This code uses source code of a repository for thread pool implementation.
+All the rights reserved for [@mbrossard](https://github.com/mbrossard),
+and the [Threadpool repository](https://github.com/mbrossard/threadpool)
