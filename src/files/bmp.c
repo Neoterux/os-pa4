@@ -48,8 +48,9 @@ BMPImage* read_bmp_image(const char *restrict src, size_t* _isout) {
   if (file_header.signature != 0x4D42) {
     image_errno = IMAGE_INVALID_BMP_IMAGE;
     return NULL;
-  } else if (file_header.bits_per_pixel != TRUECOLOR) {
+  } else if (file_header.bits_per_pixel != TRUECOLOR && file_header.bits_per_pixel != TRUECOLORALPHA) {
     image_errno = IMAGE_NOT_SUPPORTED_BPP;
+    log_info("invalid bit per pixel: %d\n", file_header.bits_per_pixel);
     return NULL;
   }
   else if (file_header.num_planes != 1) {

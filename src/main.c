@@ -115,6 +115,7 @@ void process_kernel(void *content) {
   done++;
   // sem_post(args->done_lock);
   pthread_mutex_unlock(&worker_lock);
+  free(args);
 }
 
 
@@ -257,7 +258,7 @@ int main(int argc, char **argv) {
 
     int c;
     int option_idx = 0;
-    while ((c = getopt_long(argc, argv, "hvw:Vpi", log_opts, &option_idx)) != -1) {
+    while ((c = getopt_long(argc, argv, "hviw:Vp", log_opts, &option_idx)) != -1) {
         switch(c) {
             case 'w':
                 errno = 0;
@@ -383,6 +384,17 @@ int main(int argc, char **argv) {
       border_cfg.start_col_idx = mid_width;
       border_cfg.end_col_idx = origin_image->width - 1;
       border_cfg.end_row_idx = (blur_cfg.end_row_idx = origin_image->height - 1);
+    }
+    if (settings.inverse) {
+      work_cfg_t tmp = { blur_cfg.start_row_idx, blur_cfg.end_row_idx, blur_cfg.start_col_idx, blur_cfg.end_col_idx };
+      blur_cfg.start_row_idx = border_cfg.start_row_idx;
+      blur_cfg.end_row_idx = border_cfg.end_row_idx;
+      blur_cfg.start_col_idx = border_cfg.start_col_idx;
+      blur_cfg.end_col_idx = border_cfg.end_col_idx;
+      border_cfg.start_row_idx = tmp.start_row_idx;
+      border_cfg.end_row_idx = tmp.end_row_idx;
+      border_cfg.start_col_idx = tmp.start_col_idx;
+      border_cfg.end_col_idx = tmp.end_col_idx;
     }
     log_debug("configuration for blur: { x0: %u, y0: %u, xf: %u, yf: %u}\n", blur_cfg.start_col_idx, blur_cfg.start_row_idx, blur_cfg.end_col_idx, blur_cfg.end_row_idx);
     log_debug("configuration for border: { x0: %u, y0: %u, xf: %u, yf: %u}\n", border_cfg.start_col_idx, border_cfg.start_row_idx, border_cfg.end_col_idx, border_cfg.end_row_idx);

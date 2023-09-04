@@ -56,7 +56,7 @@ typedef enum {
   DEPTH_8 = 8,
   HICOLOR = 16,
   TRUECOLOR = 24,
-  DEPTH_32 = 32,
+  TRUECOLORALPHA = 32,
 } ImageDepth;
 
 // typedef union {

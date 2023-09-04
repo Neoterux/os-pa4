@@ -51,6 +51,13 @@ Image* read_image(const char *dest_file, size_t *image_size) {
   if (image->type == BITMAP) {
     log_debug("The source was identified as a bitmap image\n");
     BMPImage *img = read_bmp_image(dest_file, NULL);
+    if (image_errno) {
+      iperror("Error while reading image");
+      if (image_errno == IMAGE_NOT_SUPPORTED_BPP) {
+        // log_err("bytes per pixel on the header: %d\n", img->header.bits_per_pixel);
+      }
+      exit(EXIT_FAILURE);
+    }
     image->content = img;
     image->height = img->normalized_height;
     image->width = img->normalized_width;
