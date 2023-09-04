@@ -11,7 +11,10 @@
  */
 struct shmem_attr_t {
   void *shmem_ptr;
-  const sem_t *access_sem;
+  sem_t *write_sem;
+  sem_t *blur;
+  sem_t *border;
+  sem_t *start;
 };
 
 typedef struct shmem_attr_t shmem_attr_t;
@@ -37,5 +40,11 @@ int configure_pipe();
 int start_magic();
 
 void mperror(const char *msg);
+
+/**
+ * @brief Unlink all the names semaphores.
+ *
+ */
+void unlink_sems(void);
 
 #endif /* __PROCESSOR_H__ */

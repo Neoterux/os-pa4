@@ -8,6 +8,6 @@ typedef struct {
   double kernel_multiplier;
 } kernel_config_t;
 
-uint8_t apply_filter(const kernel_t kernel, const double multiplier, const uint8_t (* __src_matrix)[3]);
+uint8_t apply_filter(const kernel_t kernel, const int factor, const int_fast16_t (* __src_matrix)[3]);
 
 #endif

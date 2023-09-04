@@ -33,7 +33,7 @@ void log_err(const char *message, ...) {
   strcpy(formatted, ANSI_COLOR_RED);
   strcat(formatted, message);
   strcat(formatted, ANSI_RESET_ALL);
-  vprintf(formatted, argptr);
+  vfprintf(stderr, formatted, argptr);
   va_end(argptr);
 }
 

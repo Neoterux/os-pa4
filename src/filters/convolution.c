@@ -1,4 +1,3 @@
-#include <emmintrin.h>
 #pragma GCC push_options
 #pragma GCC target("sse4.1", "sse4.2", "avx2")
 
@@ -17,23 +16,38 @@
              0,            0,            0,            0 \
   )
 
+int_fast16_t conv2d(const kernel_t kernel, const int_fast16_t (*src_matrix)[3]) {
+  int_fast16_t sum = 0;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      sum += src_matrix[i][j] * kernel[i][j];
+    }
+  }
+  return sum;
+}
+
 // __attribute__((target("default")))
-uint8_t apply_filter_default(const kernel_t kernel, const double multiplier, const uint8_t (*src_matrix)[3]) {
-  uint8_t accumulator = 0;
-  log_debug("using the default calcuation method\n");
+uint8_t apply_filter_default(const kernel_t kernel, const int factor, const int_fast16_t (*src_matrix)[3]) {
+  int accumulator = 0;
+  // log_debug("using the default calcuation method\n");
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       accumulator += src_matrix[i][j] * kernel[i][j];
     }
   }
-  return accumulator * multiplier;
+  // for (int i = -1; i < 1; i++) {
+  //   for (int j = -1; j < 1; j++) {
+  //     accumulator += src_matrix[1 + i][1 + j] * kernel[(3 + i) % 3][(3 + j) % 3];
+  //   }
+  // }
+  return accumulator/factor;
 }
 
 
 // based on https://gist.github.com/vermorel/7ad35212df44f3a79bca8ab5fe8e7622
 // __attribute__((target("avx2")))
-uint8_t apply_filter_avx2(const kernel_t kernel, const double multipler, const uint8_t (*src_matrix)[3]) {
-  log_debug("using avx2 optimizations\n");
+uint8_t apply_filter_avx2(const kernel_t kernel, const int factor, const uint8_t (*src_matrix)[3]) {
+  // log_debug("using avx2 optimizations\n");
   const __m256i _mm_kernel = _m256_matrix(kernel);
   const __m256i src = _m256_matrix(src_matrix);
   const __m256i precalc = _mm256_mullo_epi16(_mm_kernel, src);
@@ -48,7 +62,7 @@ uint8_t apply_filter_avx2(const kernel_t kernel, const double multipler, const u
   // Sum the two parts of the avx register
   sum = _mm_hadd_epi16(sum, sum);
   // Store the lowest part of the avx register
-  return _mm_extract_epi16(sum, 0) * multipler;
+  return _mm_extract_epi16(sum, 0) / factor;
   #elif defined(__GNUC__) || defined(__GNUG__) && defined(__AVX2__)
   // Calculate the sum of all the avx vector on single value
   const __m128i vlow = _mm256_castsi256_si128(precalc);
@@ -61,25 +75,25 @@ uint8_t apply_filter_avx2(const kernel_t kernel, const double multipler, const u
   // Sum the two parts of the avx register
   const __m128i sum3 = _mm_hadd_epi16(sum2, sum2);
   // Store the lowest part of the avx register
-  return _mm_extract_epi16(sum3, 0) * multipler;
+  return _mm_extract_epi16(sum3, 0)/ factor;
   #else
   #error("NO Supported Compiler")
   #endif
 }
 
 __attribute__(( target("sse4.1,sse4.2") ))
-uint_fast8_t apply_filter_sse4(const kernel_t kernel_settings, const double multiplier, const uint8_t (*src_matrix)[3]) {
+uint_fast8_t apply_filter_sse4(const kernel_t kernel_settings, const int factor, const uint8_t (*src_matrix)[3]) {
   return 0;
 }
 
 
-uint8_t apply_filter(const kernel_t kernel, const double multipler, const uint8_t (*src_matrix)[3]) {
-  __builtin_cpu_init();
-  if (__builtin_cpu_supports("avx2")) {
-    return apply_filter_avx2(kernel, multipler, src_matrix);
-  } else if (__builtin_cpu_supports("sse4.1")) {
-    return apply_filter_sse4(kernel, multipler, src_matrix);
-  }
-  return apply_filter_default(kernel, multipler, src_matrix);
+uint8_t apply_filter(const kernel_t kernel, const int factor, const int_fast16_t (*src_matrix)[3]) {
+  // __builtin_cpu_init();
+  // if (__builtin_cpu_supports("avx2")) {
+  //   return apply_filter_avx2(kernel, factor, src_matrix);
+  // } else if (__builtin_cpu_supports("sse4.1")) {
+  //   return apply_filter_sse4(kernel, factor, src_matrix);
+  // }
+  return apply_filter_default(kernel, factor, src_matrix);
 }
 #pragma GCC pop_options

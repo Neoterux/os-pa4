@@ -14,6 +14,9 @@
 #include <unistd.h>
 
 #define SHMEM_SEMNAME "IMAGE_ACCESS_SEM"
+#define SHMEM_SEMBLUR "BLURFILTER_SEM"
+#define SHMEM_SEMBORD "BORDERFILTER_SEM"
+#define SHMEM_START "LAUNCH_SEM"
 
 /**
  * @brief The settings of the program.
@@ -57,7 +60,10 @@ int configure_shared_memory(const char *restrict output, size_t size, shmem_attr
   }
   // Initialize the shared memory file to write into
   void *ptr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-  config->access_sem = sem_open(SHMEM_SEMNAME, O_CREAT, S_IRUSR | S_IWUSR, 1);
+  config->write_sem = sem_open(SHMEM_SEMNAME, O_CREAT, S_IRUSR | S_IWUSR, 1);
+  config->blur = sem_open(SHMEM_SEMBLUR, O_CREAT, S_IRUSR | S_IWUSR, 1);
+  config->border = sem_open(SHMEM_SEMBORD, O_CREAT, S_IRUSR | S_IWUSR, 1);
+  config->start = sem_open(SHMEM_START, O_CREAT, S_IRUSR|S_IWUSR, 2);
   config->shmem_ptr = ptr;
   close(fd);
   return 1;
@@ -76,4 +82,12 @@ void mperror(const char *msg) {
     break;
   }
   log_err("%s: %s\n", msg, decode_msg);
+}
+
+
+void unlink_sems(void) {
+  sem_unlink(SHMEM_SEMBLUR);
+  sem_unlink(SHMEM_SEMBORD);
+  sem_unlink(SHMEM_SEMNAME);
+  sem_unlink(SHMEM_START);
 }
