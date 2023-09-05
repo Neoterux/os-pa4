@@ -6,29 +6,27 @@
 #include "../utils/log.h"
 extern int image_errno;
 
-#ifdef DEBUG
 void print_header(BMPFileHeader *header) {
-  log_debug("** Header data **\n");
-  log_debug("Signature: %x\n", header->signature);
-  log_debug("File size: %d\n", header->file_size);
-  log_debug("Reserved1: %d\n", header->reserved1);
-  log_debug("Reserved2: %d\n", header->reserved2);
-  log_debug("Offset: %d\n", header->offset);
-  log_debug("DIB Header size: %d\n", header->dib_header_size);
-  log_debug("Width: %d\n", header->width_px);
-  log_debug("Height: %d\n", header->height_px);
-  log_debug("Num planes: %d\n", header->num_planes);
-  log_debug("Bits per pixel: %d\n", header->bits_per_pixel);
-  log_debug("Compression: %d\n", header->compression);
-  log_debug("Image size: %d\n", header->image_size_bytes);
-  log_debug("X resolution: %d\n", header->x_resolution_ppm);
-  log_debug("Y resolution: %d\n", header->y_resolution_ppm);
-  log_debug("Num colors: %d\n", header->num_colors);
-  log_debug("Important colors: %d\n", header->important_colors);
-  log_debug("** End of header data **\n");
+  log_info("** Header data **\n");
+  log_info("Signature: %x\n", header->signature);
+  log_info("File size: %d\n", header->file_size);
+  log_info("Reserved1: %d\n", header->reserved1);
+  log_info("Reserved2: %d\n", header->reserved2);
+  log_info("Offset: %d\n", header->offset);
+  log_info("DIB Header size: %d\n", header->dib_header_size);
+  log_info("Width: %d\n", header->width_px);
+  log_info("Height: %d\n", header->height_px);
+  log_info("Num planes: %d\n", header->num_planes);
+  log_info("Bits per pixel: %d\n", header->bits_per_pixel);
+  log_info("Compression: %d\n", header->compression);
+  log_info("Image size: %d\n", header->image_size_bytes);
+  log_info("X resolution: %d\n", header->x_resolution_ppm);
+  log_info("Y resolution: %d\n", header->y_resolution_ppm);
+  log_info("Num colors: %d\n", header->num_colors);
+  log_info("Important colors: %d\n", header->important_colors);
+  log_info("** End of header data **\n");
 
 }
-#endif
 
 BMPImage* read_bmp_image(const char *restrict src, size_t* _isout) {
   // Open the file and read the content
@@ -60,9 +58,7 @@ BMPImage* read_bmp_image(const char *restrict src, size_t* _isout) {
     image_errno = IMAGE_BMP_NOT_SUPPORTED_COMPRESSION;
     return NULL;
   }
-  #ifdef DEBUG
   print_header(&file_header);
-  #endif
   //
   BMPImage *image = malloc(sizeof(BMPImage));
   image->bytes_per_pixel = file_header.bits_per_pixel / 8;
@@ -127,7 +123,9 @@ int copy_content_to_shared_memory_bmp(int shm_id, BMPImage *restrict __dest, con
   return 0;
 }
 
+#ifdef DEBUG
 int xd = 700;
+#endif
 
 int write_on_bmp_image(void *shmm, const BMPImage *restrict __src, Pixel pixel, int row, int col) {
   if (shmm == NULL) {
@@ -138,7 +136,7 @@ int write_on_bmp_image(void *shmm, const BMPImage *restrict __src, Pixel pixel, 
   int bpp = __src->bytes_per_pixel;
   offset += col * bpp; // Go to the horizontal address
   offset += (row * __src->normalized_width) * bpp;
-
+#ifdef DEBUG
   if (xd-- > 0) {
     log_warn(
       "\n-----\n"
@@ -147,7 +145,7 @@ int write_on_bmp_image(void *shmm, const BMPImage *restrict __src, Pixel pixel, 
       "result: %p\n"
       "====\n",__src->normalized_height, __src->normalized_width, bpp, shmm, row, col, offset, offset, offset + shmm);
   }
-
+#endif
   memcpy(shmm + offset, &pixel, bpp);
   return 0;
 }

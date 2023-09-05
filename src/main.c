@@ -152,7 +152,7 @@ void blur_process(work_cfg_t cfg, int thread_count) {
         // log_debug("New worker thread created\n");
         pthread_mutex_unlock(&worker_lock);
       } else {
-        log_warn("The queue is full, waiting...\n");
+        // log_warn("The queue is full, waiting...\n");
         int max_intents = 100;
         while(threadpool_add(pool, process_kernel, args, 0) != 0 && max_intents) {
           sleep(1);
@@ -206,7 +206,7 @@ void border_process(work_cfg_t cfg, int thread_count) {
         // log_debug("New worker thread created\n");
         pthread_mutex_unlock(&worker_lock);
       } else {
-        log_warn("The queue is full, waiting...\n");
+        // log_warn("The queue is full, waiting...\n");
         int max_intents = 100;
         while(threadpool_add(pool, process_kernel, args, 0) != 0 && max_intents) {
           sleep(1);
